@@ -1,8 +1,8 @@
-from flask import Blueprint
+from flask import Blueprint, render_template
 
 views = Blueprint("views", __name__)
 
 @views.route("/")
 @views.route("/index")
 def index():
-    return "<p>You are on the index page</p>"
+    return render_template("home.html")
