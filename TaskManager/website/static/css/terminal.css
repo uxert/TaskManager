@@ -1,0 +1,43 @@
+.terminal-container {
+  width: 600px;
+  height: 400px;
+  background-color: #000;
+  color: #0f0;
+  font-family: monospace;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.terminal-container .output {
+  height: 350px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.terminal-container .input-line {
+  display: flex;
+  align-items: center;
+}
+
+.terminal-container .prompt {
+  color: #0f0;
+  margin-right: 5px;
+}
+
+.terminal-container .command-input {
+  flex-grow: 1;
+  background-color: transparent;
+  border: none;
+  color: #0f0;
+  font-family: monospace;
+  outline: none;
+}
+
+.terminal-container .command-line {
+  margin-bottom: 5px;
+}
+
+.terminal-container .response-line {
+  margin-bottom: 10px;
+  white-space: pre-wrap;
+}
