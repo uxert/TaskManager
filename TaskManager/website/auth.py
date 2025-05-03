@@ -20,23 +20,24 @@ def login():
 
 
 def validate_signup(email, username, password1, password2) -> bool:
+    success = True
     if password1 != password2:
         flash("Passwords don't match!", category="error")
-        return False
+        success = False
     if len(username) <= 3:
         flash("Username too short! Should be at least 4 characters", category="error")
-        return False
+        success = False
     if len(password1) <=7: #passwords are equal at this point
         flash("Password too short! Should be at least 8 characters", category="error")
-        return False
+        success = False
     # check if either email or username already used
     if False:
         flash(f"Username {username} is already taken!", category="error")
-        return False
+        success = False
     if False:
         flash(f"Account registered on {email} already exists!", category="error")
-        return False
-    return True
+        success = False
+    return success
 
 def register_user(email, username, password) -> SimpleResponse:
     """Function to register a new user in the database."""
