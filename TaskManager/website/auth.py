@@ -1,5 +1,8 @@
 from flask import Blueprint, render_template, request, flash
 from typing import NamedTuple
+from .models import User
+from . import db
+from sqlalchemy.exc import SQLAlchemyError
 
 
 class SimpleResponse(NamedTuple):
@@ -41,6 +44,13 @@ def validate_signup(email, username, password1, password2) -> bool:
 
 def register_user(email, username, password) -> SimpleResponse:
     """Function to register a new user in the database."""
+    new_user = User(email, username, password)
+    try:
+        db.session.add(new_user)
+        db.session.commit()
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return SimpleResponse(False, str(e))
     return SimpleResponse(True)
 
 @auth.route("/register", methods=["GET", "POST"])
