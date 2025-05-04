@@ -1,14 +1,8 @@
 from flask import Blueprint, render_template, request, flash
-from typing import NamedTuple
 from .models import User
 from . import db
 from sqlalchemy.exc import SQLAlchemyError
-
-
-class SimpleResponse(NamedTuple):
-    """ Simple NamedTuple that will allow to pass results from database functions - status and error explanation"""
-    success: bool
-    message: str = ''
+from .utils.responses import SimpleResponse
 
 auth = Blueprint("auth", __name__)
 
