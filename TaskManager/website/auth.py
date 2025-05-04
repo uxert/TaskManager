@@ -44,7 +44,7 @@ def register_user(email, username, password) -> SimpleResponse:
         db.session.commit()
     except SQLAlchemyError as e:
         db.session.rollback()
-        return SimpleResponse(False, str(e))
+        return SimpleResponse(False, str(e), e)
     return SimpleResponse(True)
 
 @auth.route("/register", methods=["GET", "POST"])
