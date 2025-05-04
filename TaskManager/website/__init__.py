@@ -1,6 +1,4 @@
 from flask import Flask
-from .views import views
-from.auth import auth
 from flask_sqlalchemy import SQLAlchemy
 from os import path
 
@@ -12,6 +10,9 @@ DATABASE_NAME = "database.db"
 DATABASE_PATH = path.join(BACKEND_DIR, DATABASE_NAME)
 
 def create_app():
+    from .views import views
+    from .auth import auth
+
     app = Flask(__name__)
     app.config["SECRET_KEY"] = "<KEY>"
     app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DATABASE_PATH}"
