@@ -3,7 +3,7 @@ import os
 from sqlalchemy.orm import close_all_sessions
 from sqlalchemy.exc import IntegrityError, ResourceClosedError
 from website import db, create_app, TEST_DATABASE_PATH
-from website.auth import register_user
+from website.auth import register_user, is_email_available, is_username_available
 
 
 class TestAuth(TestCase):
@@ -49,4 +49,24 @@ class TestAuth(TestCase):
         self.assertFalse(res2.success)
         self.assertIsInstance(res2.exception, IntegrityError)
 
+    def test_is_username_available(self):
+        some_name = "Jack"
+        res1 = is_username_available(some_name)
+        register_user(email="some@email.com", username=some_name, password="Ladidadida")
+        res2 = is_username_available(some_name)
+        res3 = is_username_available(some_name + "!")
 
+        self.assertTrue(res1)
+        self.assertFalse(res2)
+        self.assertTrue(res3)
+
+    def test_is_email_available(self):
+        some_email = ("jack@email.com")
+        res1 = is_email_available(some_email)
+        register_user(email=some_email, username="Jack", password="Ladidadida")
+        res2 = is_email_available(some_email)
+        res3 = is_email_available(some_email + "!")
+
+        self.assertTrue(res1)
+        self.assertFalse(res2)
+        self.assertTrue(res3)

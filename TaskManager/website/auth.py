@@ -16,6 +16,14 @@ def login():
 
 
 
+def is_email_available(email) -> bool:
+    existence_query = User.query.filter_by(email=email).exists()
+    return not db.session.query(existence_query).scalar()
+
+def is_username_available(username) -> bool:
+    existence_query = User.query.filter_by(username=username).exists()
+    return not db.session.query(existence_query).scalar()
+
 def validate_signup(email, username, password1, password2) -> bool:
     success = True
     if password1 != password2:
@@ -28,10 +36,10 @@ def validate_signup(email, username, password1, password2) -> bool:
         flash("Password too short! Should be at least 8 characters", category="error")
         success = False
     # check if either email or username already used
-    if False:
+    if is_username_available(username) is False:
         flash(f"Username {username} is already taken!", category="error")
         success = False
-    if False:
+    if is_email_available(email) is False:
         flash(f"Account registered on {email} already exists!", category="error")
         success = False
     return success
