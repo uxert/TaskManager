@@ -10,9 +10,11 @@
         <div>
             <a id="login" href="/login">log in</a>
             <a id="register" href="/register">register</a>
-            <a id="logout" href="/logout">log out</a>
-            <a id="home" href="/">home</a>
-            <a id="terminal" href="/terminal">terminal</a>
+            {% if current_user.is_authenticated %}
+                <a id="logout" href="/logout">log out</a>
+                <a id="home" href="/">home</a>
+                <a id="terminal" href="/terminal">terminal</a>
+            {% endif %}
         </div>
     </nav>
     <br>

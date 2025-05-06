@@ -3,5 +3,9 @@
     Home
 {% endblock %}
 {% block content %}
-	<h1>Welcome</h1>
+	{% if current_user.is_authenticated %}
+        <h1>Welcome, {{ current_user.username }}</h1>
+    {% else %}
+        <h1>Log in to see content of this page</h1>
+    {% endif %}
 {% endblock %}
