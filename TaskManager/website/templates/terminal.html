@@ -2,6 +2,9 @@
 {% block title %}
     Terminal
 {% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/terminal.css') }}">
+{% endblock %}
 {% block content %}
 	<h1>Welcome to the terminal!</h1>
     <p>Here you can view, edit and delete your notes</p>
@@ -16,34 +19,5 @@
       </div>
     </div>
 
-    <script>
-      const output = document.getElementById('terminal-output');
-      const input = document.getElementById('command-input');
-
-      input.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-          const command = input.value;
-
-          // Display the command
-          output.innerHTML += `<div class="command-line"><span class="prompt">$</span> ${command}</div>`;
-            /*
-          // Send to backend and display response
-          fetch('/terminal/command', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({command: command})
-          })
-          .then(response => response.text())
-          .then(result => {
-            // Display the response from backend
-            output.innerHTML += `<div class="response-line">${result}</div>`;
-            // Scroll to bottom
-            output.scrollTop = output.scrollHeight;
-          });
-            */
-          // Clear input
-          input.value = '';
-        }
-      });
-    </script>
+    <script src="../static/js/terminal.js" defer></script>
 {% endblock %}
