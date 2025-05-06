@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask_login import login_required, login_user, logout_user
 from .models import User
 from . import db
 from sqlalchemy.exc import SQLAlchemyError, NoResultFound
@@ -17,6 +18,8 @@ def perform_login(username, password) -> SimpleResponse:
     password_correct = user.check_password(password)
     if password_correct is not True:
         return SimpleResponse(False, "Wrong password!")
+
+    login_user(user, remember=True)
     return SimpleResponse(True)
 
 @auth.route("/login", methods=["GET", "POST"])
@@ -94,5 +97,7 @@ def register():
     return render_template("register.html")
 
 @auth.route("/logout")
+@login_required
 def logout():
+    logout_user()
     return render_template("after_logout.html")
