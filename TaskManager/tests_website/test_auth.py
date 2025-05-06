@@ -1,9 +1,9 @@
 from unittest import TestCase
 import os
 from sqlalchemy.orm import close_all_sessions
-from sqlalchemy.exc import IntegrityError, ResourceClosedError
+from sqlalchemy.exc import IntegrityError, ResourceClosedError, NoResultFound
 from website import db, create_app, TEST_DATABASE_PATH
-from website.auth import register_user, is_email_available, is_username_available
+from website.auth import register_user, is_email_available, is_username_available, perform_login
 
 
 class TestAuth(TestCase):
@@ -70,3 +70,13 @@ class TestAuth(TestCase):
         self.assertTrue(res1)
         self.assertFalse(res2)
         self.assertTrue(res3)
+
+    def test_perform_login(self):
+        res1 = perform_login("random@randomness.ran", "Ladidadida")
+        self.assertFalse(res1.success)
+        self.assertIsInstance(res1.exception, NoResultFound)
+
+        register_user("random@randomness.ran", "random_of_course", "Ladidadida")
+        res2 = perform_login("random_of_course", "Ladidadida")
+        self.assertTrue(res2.success)
+

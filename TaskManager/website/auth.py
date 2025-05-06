@@ -1,18 +1,38 @@
-from flask import Blueprint, render_template, request, flash
+from flask import Blueprint, render_template, request, flash, redirect, url_for
 from .models import User
 from . import db
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError, NoResultFound
 from .utils.responses import SimpleResponse
 
 auth = Blueprint("auth", __name__)
 
 
-@auth.route("/login")
+def perform_login(username, password) -> SimpleResponse:
+    try:
+        user = User.query.filter_by(username=username).one()
+    except NoResultFound as e:
+        return SimpleResponse(False, f"Username {username} not found", e)
+    except SQLAlchemyError as e:
+        return SimpleResponse(False, f"Database error: {e}", e)
+    password_correct = user.check_password(password)
+    if password_correct is not True:
+        return SimpleResponse(False, "Wrong password!")
+    return SimpleResponse(True)
+
+@auth.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
         return render_template("login.html")
     username = request.form["username"]
     password = request.form["password"]
+
+    result = perform_login(username, password)
+    if result.success is True:
+        flash(f"You have been logged in correctly, welcome {username}", category="success")
+        return redirect(url_for("views.index"))
+    else:
+        flash(f"You have not been logged in: {result.message}", category="error")
+        return render_template("login.html")
 
 
 
