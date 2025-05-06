@@ -15,6 +15,7 @@ TEST_DATABASE_PATH = path.join(BACKEND_DIR, "test.db")
 def create_app(test=False):
     from .views import views
     from .auth import auth
+    from .terminal import terminal
 
     database_path = TEST_DATABASE_PATH if test else DATABASE_PATH
     app = Flask(__name__)
@@ -24,6 +25,7 @@ def create_app(test=False):
 
     app.register_blueprint(views, url_prefix="/")
     app.register_blueprint(auth, url_prefix="/")
+    app.register_blueprint(terminal, url_prefix="/terminal")
 
     from .models import User, Task  # so that these classes are actually  defined when creating the database
     create_database(app, database_path)
