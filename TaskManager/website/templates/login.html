@@ -2,6 +2,29 @@
 {% block title %}
     Sign In
 {% endblock %}
+
 {% block content %}
-	This (will be) login page
+    <style>
+        .center-wrapper {
+            display: flex;
+            justify-content: center;
+            min-height: 100vh; /* or any height you want */
+        }
+    </style>
+    <div class="center-wrapper">
+        <form method="post" style="margin: 0 auto; width: auto">
+            <h3>Sign in </h3>
+            <div>
+                <label for="username">username </label>
+                <input type="text" id="username" name="username" placeholder="Enter username" required>
+            </div>
+            <div>
+                <label for="password">password</label>
+                <input type="password" id="password" name="password" placeholder="Enter password" required>
+            </div>
+            <br>
+            <button type="submit">Sign in!</button>
+        </form>
+    </div>
+
 {% endblock %}
