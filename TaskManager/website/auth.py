@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, login_user, logout_user
-from .models import User
+from .db_models import User
 from . import db
 from sqlalchemy.exc import SQLAlchemyError, NoResultFound
-from .utils.responses import SimpleResponse
+from .models.responses import SimpleResponse
 
 auth = Blueprint("auth", __name__)
 
