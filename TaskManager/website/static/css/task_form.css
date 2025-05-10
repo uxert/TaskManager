@@ -1,0 +1,94 @@
+/* Basic styling reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    padding: 20px;
+}
+
+/* Style the dialog itself */
+dialog#formModal {
+    padding: 20px;
+    border-radius: 5px;
+    width: 90%;
+    max-width: 500px;
+    border: none; /* Remove default dialog border */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin: auto;
+    /* Dialog is centered by default when using showModal() */
+}
+
+/* Style the dialog backdrop */
+dialog#formModal::backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+/* Close button (positioned relative to the dialog) */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #888;
+    z-index: 1; /* Ensure it's above dialog content */
+}
+
+.close-btn:hover {
+    color: #000;
+}
+
+/* Form styling */
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.submit-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.submit-btn:hover {
+    background-color: #45a049;
+}
+
+/* Button to open the form */
+#openFormBtn {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#openFormBtn:hover {
+    background-color: #0b7dda;
+}

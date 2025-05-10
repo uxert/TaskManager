@@ -1,3 +1,5 @@
+import {showTaskForm} from "./show_task_dialog.js";
+
 const output = document.getElementById('terminal-output');  // The terminal output display area
 const input = document.getElementById('command-input');     // The command input field
 
@@ -65,7 +67,7 @@ function send_terminal_cmd(endpoint, args) {
  * Processes a command entered by the user
  * @param {string} command - The command string to process
  */
-function processCommand(command) {
+async function processCommand(command) {
     // Display the command in the terminal with the prompt
     output.innerHTML += `<div class="command-line"><span class="prompt">$</span> ${command}</div>`;
 
@@ -94,12 +96,20 @@ function processCommand(command) {
     };
 
     // Check if the command exists in our endpoint map
-    if (endpoints[cmd]) {
-        const endpoint = endpoints[cmd]
-        send_terminal_cmd(endpoint, args);
-    } else if (cmd !== 'help' && cmd !== 'clear') {
+
+    if (!endpoints[cmd]) {
         // If command is not recognized and not one of our locally handled commands
         addLine(`Unknown command: '${cmd}'. Type 'help' for available commands.`, 'error');
+        return;
+    }
+    const endpoint = endpoints[cmd];
+
+    // Prepare the args
+    if (cmd === 'add')
+    {
+        let args = await showTaskForm();
+        send_terminal_cmd(endpoint, args);
+        return;
     }
 }
 
