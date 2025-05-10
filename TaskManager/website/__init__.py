@@ -27,7 +27,7 @@ def create_app(test=False):
     app.register_blueprint(auth, url_prefix="/")
     app.register_blueprint(terminal, url_prefix="/terminal")
 
-    from .models import User, Task  # so that these classes are actually  defined when creating the database
+    from .db_models import User, Task  # so that these classes are actually  defined when creating the database
     create_database(app, database_path)
 
     login_manager = LoginManager()
