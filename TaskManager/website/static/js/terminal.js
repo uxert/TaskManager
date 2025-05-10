@@ -42,7 +42,7 @@ function send_terminal_cmd(endpoint, args) {
     fetch(endpoint, {
         method: 'POST',                                  // Using POST method
         headers: {'Content-Type': 'application/json'},   // JSON content type
-        body: JSON.stringify({args: args})               // Send arguments as JSON
+        body: JSON.stringify(args)               // Send arguments as JSON
     })
         .then(response => response.json())  // Parse JSON response
         .then(data => {
