@@ -74,7 +74,7 @@ async function processCommand(command) {
     // Parse the command into the base command and its arguments
     const parts = command.trim().split(' ');  // Split by spaces
     const cmd = parts[0];                     // First part is the command name
-    const args = parts.slice(1).join(' ');    // Rest is joined back as arguments
+    let args = parts.slice(1).join(' ');    // Rest is joined back as arguments
 
     if (cmd === 'clear') {
         output.innerHTML = '';
@@ -107,10 +107,14 @@ async function processCommand(command) {
     // Prepare the args
     if (cmd === 'add')
     {
-        let args = await showTaskForm();
-        send_terminal_cmd(endpoint, args);
-        return;
+        args = await showTaskForm();
+        if (args === null)
+        {
+            addLine("Add command cancelled. No changes made");
+            return;
+        }
     }
+    send_terminal_cmd(endpoint, args);
 }
 
 // Set up event listener for keyboard input
