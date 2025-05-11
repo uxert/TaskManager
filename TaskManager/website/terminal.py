@@ -13,7 +13,7 @@ terminal = Blueprint('terminal', __name__)
 @terminal.route('/view', methods=['POST'])
 @login_required
 def view():
-    """Allows to see all contents of one specific task based on its id OR the alias (name) given it by the user"""
+    """Allows to see all contents of one specific task based on its id"""
     try:
         task_data = TargetSpecificTaskModel.model_validate(request.json)
     except ValidationError as e:
@@ -58,7 +58,7 @@ def show_list():
 @terminal.route('/delete', methods=['POST'])
 @login_required
 def delete():
-    """Deletes a task from the database, based on its id OR alias given by the user"""
+    """Deletes a task from the database, based on its id"""
     try:
         task_data = TargetSpecificTaskModel.model_validate(request.json)
     except ValidationError as e:
@@ -69,8 +69,7 @@ def delete():
 @login_required
 def edit():
     """
-    Allows user to edit everything in the task (except id). Task to edit can be chosen
-    either by its id OR alias given by the user
+    Allows user to edit everything in the task (except id). Task to edit can be chosen by its id.
     """
     try:
         task_data = TargetSpecificTaskModel.model_validate(request.json)
