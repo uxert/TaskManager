@@ -1,8 +1,12 @@
-from .db_operations import try_add_new_task
+from .db_operations import try_add_new_task, try_getting_user_tasks
 from .models import AddTaskRequestModel, TargetSpecificTaskModel
+from .utils import DateTimeEncoder
 from pydantic import ValidationError
 from flask import Blueprint, jsonify, request
 from flask_login import login_required, current_user
+from sqlalchemy.exc import NoResultFound
+import json
+
 
 terminal = Blueprint('terminal', __name__)
 
@@ -38,7 +42,18 @@ def add():
 def show_list():
     """Shows all tasks of requesting user"""
     # unfortunately name 'list' is built in python
-    return jsonify({"status": "success", "result": "list command has been received"})
+    result = try_getting_user_tasks(current_user.id)
+    if result.success is False:
+        if isinstance(result.exception, NoResultFound):
+            return jsonify({"status": "error", "message": result.message}), 404
+        return jsonify({"status": "error", "message": result.message}), 400
+    tasks = result.tasks
+    for task in tasks:
+        # task.pop("task_id")
+        task.pop("parent_task_id")
+        task.pop("user_id")
+    tasks_json = json.dumps(tasks, indent=4, cls=DateTimeEncoder)
+    return jsonify({"status": "success", "result": tasks_json})
 
 @terminal.route('/delete', methods=['POST'])
 @login_required
