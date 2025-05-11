@@ -36,3 +36,12 @@ class Task(db.Model):
         backref=db.backref("parent", remote_side=[id]),
         lazy="select"
     )
+
+    def __init__(self, title, importance, deadline, est_time_days, description, user_id, parent_task_id):
+        self.title = title
+        self.importance = importance
+        self.deadline = deadline
+        self.est_time_days = est_time_days
+        self.description = description
+        self.user_id = user_id
+        self.parent_task_id = parent_task_id

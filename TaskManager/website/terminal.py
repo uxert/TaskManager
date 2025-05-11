@@ -1,8 +1,8 @@
-from flask import Blueprint, jsonify, request
-from flask_login import login_required
+from .db_operations import try_add_new_task
 from .models import AddTaskRequestModel, TargetSpecificTaskModel
 from pydantic import ValidationError
-
+from flask import Blueprint, jsonify, request
+from flask_login import login_required, current_user
 
 terminal = Blueprint('terminal', __name__)
 
@@ -24,7 +24,14 @@ def add():
         task_data = AddTaskRequestModel.model_validate(request.json)
     except ValidationError as e:
         return jsonify({"status": "error", "message": str(e)}), 400
-    return jsonify({"status": "success", "result": "add command has been received"})
+
+    user_id = current_user.id
+    result = try_add_new_task(task_data, user_id)
+    if result.success is False:
+        return jsonify({"status": "error", "message": result.message}), 400
+    msg = (f"Your task '{task_data.title}', with importance {task_data.importance} and deadline {task_data.deadline} "
+           f"has been succesfully added.'")
+    return jsonify({"status": "success", "result": msg}), 200
 
 @terminal.route('/list', methods=['POST'])
 @login_required
