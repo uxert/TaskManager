@@ -2,6 +2,8 @@
 from . import db
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
+from sqlalchemy import DateTime
+
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -26,7 +28,7 @@ class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     importance = db.Column(db.Integer, nullable=False)
-    deadline = db.Column(db.Date, nullable=False)
+    deadline = db.Column(DateTime, nullable=False)
     est_time_days = db.Column(db.Integer, nullable=True)
     description = db.Column(db.String(2000), nullable=True)
     user_id = db.Column(db.ForeignKey("user.id"), nullable=False)
@@ -45,3 +47,16 @@ class Task(db.Model):
         self.description = description
         self.user_id = user_id
         self.parent_task_id = parent_task_id
+
+    def to_dict(self):
+        task_dict = {
+            "task_id": self.id,
+            "title": self.title,
+            "importance": self.importance,
+            "deadline": self.deadline,
+            "est_time_days": self.est_time_days,
+            "description": self.description,
+            "user_id": self.user_id,
+            "parent_task_id": self.parent_task_id
+        }
+        return task_dict

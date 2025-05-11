@@ -1,10 +1,9 @@
 from . import db
 from .models import AddTaskRequestModel, TargetSpecificTaskModel
-from .models.responses import SimpleResponse
+from .models.responses import SimpleResponse, ManyTasksResponse
 from .db_models import Task
 from typing import Optional
-from sqlalchemy.exc import SQLAlchemyError
-
+from sqlalchemy.exc import SQLAlchemyError, NoResultFound
 
 
 def try_add_new_task(task_data: AddTaskRequestModel, user_id:int, parent_task_id: Optional[int] = None) ->SimpleResponse:
@@ -26,3 +25,16 @@ def try_add_new_task(task_data: AddTaskRequestModel, user_id:int, parent_task_id
         db.session.rollback()
         return SimpleResponse(False, str(e), e)
 
+def try_getting_user_tasks(user_id: int) -> ManyTasksResponse:
+    try:
+        tasks = Task.query.filter_by(user_id=user_id).all()
+        tasks_formatted = []
+        for task in tasks:
+            tasks_formatted.append(task.to_dict())
+        return ManyTasksResponse(True, tasks=tasks_formatted)
+    except NoResultFound as nrf:
+        db.session.rollback()
+        return ManyTasksResponse(False, f'No tasks found for user {user_id}', nrf)
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return ManyTasksResponse(False, str(e), e)
