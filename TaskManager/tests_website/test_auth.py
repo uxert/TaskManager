@@ -2,8 +2,8 @@ from unittest import TestCase
 import os
 from sqlalchemy.orm import close_all_sessions
 from sqlalchemy.exc import IntegrityError, ResourceClosedError, NoResultFound
-from website import db, create_app, TEST_DATABASE_PATH
-from website.auth import register_user, is_email_available, is_username_available, perform_login
+from ..website import db, create_app, TEST_DATABASE_PATH
+from ..website.auth import register_user, is_email_available, is_username_available, perform_login
 
 
 class TestAuth(TestCase):
@@ -32,8 +32,12 @@ class TestAuth(TestCase):
             db.session.execute(table.delete())
         db.session.commit()
 
+        # Create a request context for this test
+        self.request_ctx = self.app.test_request_context()
+        self.request_ctx.push()
+
     def tearDown(self):
-        pass
+        self.request_ctx.pop()
 
     def test_register_user_valid(self):
         res1 = register_user("random@randomness.ran", "random_of_course", "123123123")
