@@ -1,6 +1,6 @@
 from . import db
-from .models import AddTaskRequestModel, TargetSpecificTaskModel
-from .models.responses import SimpleResponse, ManyTasksResponse
+from .models import AddTaskRequestModel
+from .models.responses import SimpleResponse, ManyTasksResponse, OneTaskResponse
 from .db_models import Task
 from typing import Optional
 from sqlalchemy.exc import SQLAlchemyError, NoResultFound
@@ -38,3 +38,13 @@ def try_getting_user_tasks(user_id: int) -> ManyTasksResponse:
     except SQLAlchemyError as e:
         db.session.rollback()
         return ManyTasksResponse(False, str(e), e)
+
+def try_getting_specific_task(user_id: int, task_id: int) -> OneTaskResponse:
+    try:
+        task = Task.query.filter_by(user_id=user_id, id=task_id).one()
+        task_dict = task.to_dict()
+        return OneTaskResponse(True, task=task_dict)
+    except NoResultFound as nrf:
+        return OneTaskResponse(False, f'No task with id {task_id} found in your account', nrf)
+    except SQLAlchemyError as e:
+        return OneTaskResponse(False, str(e), e)

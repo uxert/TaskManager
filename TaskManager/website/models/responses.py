@@ -19,6 +19,10 @@ class ManyTasksResponse(SimpleResponse):
     """
     tasks: list[dict] = None
 
+@dataclass(frozen=True)
+class OneTaskResponse(SimpleResponse):
+    task: dict = None
+
 class TerminalAPIResponse(BaseModel):
     status: str
     result: str
