@@ -6,7 +6,8 @@ from pydantic import ValidationError
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import close_all_sessions
 from ..website import db, create_app, TEST_DATABASE_PATH
-from ..website.db_operations import try_getting_user_tasks, try_add_new_task, try_getting_specific_task
+from ..website.db_operations import try_getting_user_tasks, try_add_new_task, try_getting_specific_task, \
+    try_removing_specific_task
 from ..website.models.requests import AddTaskRequestModel
 
 
@@ -155,6 +156,64 @@ class TestDbOperations(TestCase):
         self.assertFalse(res.success)
         self.assertIsInstance(res.exception, TypeError)
 
+    def test_try_removing_specific_task(self):
+        task_data = AddTaskRequestModel(
+            title="Test task",
+            importance=10,
+            deadline=datetime.now(),
+            est_time_days=12,
+            description="Hello, it's a test. Also, hello world!"
+        )
+        test_user_id = 42
+        res1 = try_add_new_task(task_data, test_user_id)
+        self.assertTrue(res1.success)
+        id_1 = int(res1.message)
 
+        task_data.title = "Second test task"
+        task_data.importance = 999
+        res2 = try_add_new_task(task_data, test_user_id)
+        self.assertTrue(res2.success)
+        id_2 = int(res2.message)
 
+        find_1_res = try_getting_specific_task(test_user_id, id_1)
+        find_2_res = try_getting_specific_task(test_user_id, id_2)
+        self.assertTrue(find_1_res.success)
+        self.assertTrue(find_2_res.success)
 
+        try_removing_specific_task(test_user_id, id_1)
+
+        find_1_res = try_getting_specific_task(test_user_id, id_1)
+        find_2_res = try_getting_specific_task(test_user_id, id_2)
+        self.assertFalse(find_1_res.success)
+        self.assertTrue(find_2_res.success)
+
+        try_removing_specific_task(test_user_id, id_2)
+
+        find_1_res = try_getting_specific_task(test_user_id, id_1)
+        find_2_res = try_getting_specific_task(test_user_id, id_2)
+        self.assertFalse(find_1_res.success)
+        self.assertFalse(find_2_res.success)
+
+    def test_try_remove_specific_task_wrong_arg(self):
+        task_data = AddTaskRequestModel(
+            title="Test task",
+            importance=10,
+            deadline=datetime.now(),
+            est_time_days=12,
+            description="Hello, it's a test. Also, hello world!"
+        )
+        test_user_id = 42
+        res1 = try_add_new_task(task_data, test_user_id)
+        self.assertTrue(res1.success)
+        id_1 = int(res1.message)
+
+        res_del_1 = try_removing_specific_task("test_user_id", id_1)
+        res_del_2 = try_removing_specific_task(test_user_id, "id_1")
+        res_del_3 = try_removing_specific_task("test_user_id", "id_1")
+
+        self.assertIsInstance(res_del_1.exception, TypeError)
+        self.assertIsInstance(res_del_2.exception, TypeError)
+        self.assertIsInstance(res_del_3.exception, TypeError)
+
+        res_del_4 = try_removing_specific_task(test_user_id, id_1)
+        self.assertTrue(res_del_4.success)
