@@ -7,6 +7,10 @@ from sqlalchemy.exc import SQLAlchemyError, NoResultFound
 
 
 def try_add_new_task(task_data: AddTaskRequestModel, user_id:int, parent_task_id: Optional[int] = None) ->SimpleResponse:
+    if not isinstance(task_data, AddTaskRequestModel):
+        err = TypeError("Provided task_data is not instance of AddTaskRequestModel")
+        return SimpleResponse(False, str(err), err)
+
     new_task = Task(
         title=task_data.title,
         importance=task_data.importance,
@@ -26,6 +30,10 @@ def try_add_new_task(task_data: AddTaskRequestModel, user_id:int, parent_task_id
         return SimpleResponse(False, str(e), e)
 
 def try_getting_user_tasks(user_id: int) -> ManyTasksResponse:
+    if not isinstance(user_id, int):
+        err = TypeError("Provided user_id is not an instance of int")
+        return ManyTasksResponse(False, str(err), err)
+
     try:
         tasks = Task.query.filter_by(user_id=user_id).all()
         tasks_formatted = []
@@ -40,6 +48,10 @@ def try_getting_user_tasks(user_id: int) -> ManyTasksResponse:
         return ManyTasksResponse(False, str(e), e)
 
 def try_getting_specific_task(user_id: int, task_id: int) -> OneTaskResponse:
+    if not isinstance(task_id, int) or not isinstance(user_id, int):
+        err = TypeError("At least one of provided id's is not an instance of int")
+        return OneTaskResponse(False, str(err), err)
+
     try:
         task = Task.query.filter_by(user_id=user_id, id=task_id).one()
         task_dict = task.to_dict()
