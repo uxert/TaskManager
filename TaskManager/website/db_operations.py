@@ -60,3 +60,18 @@ def try_getting_specific_task(user_id: int, task_id: int) -> OneTaskResponse:
         return OneTaskResponse(False, f'No task with id {task_id} found in your account', nrf)
     except SQLAlchemyError as e:
         return OneTaskResponse(False, str(e), e)
+
+def try_removing_specific_task(user_id, task_id) -> SimpleResponse:
+    if not isinstance(task_id, int) or not isinstance(user_id, int):
+        err = TypeError("At least one of provided id's is not an instance of int")
+        return OneTaskResponse(False, str(err), err)
+
+    try:
+        task = Task.query.filter_by(user_id=user_id, id=task_id).one()
+        db.session.delete(task)
+        db.session.commit()
+        return SimpleResponse(True, message=task.title)
+    except NoResultFound as nrf:
+        return OneTaskResponse(False, f'No task with id {task_id} found in your account', nrf)
+    except SQLAlchemyError as e:
+        return OneTaskResponse(False, str(e), e)
