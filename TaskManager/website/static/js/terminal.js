@@ -114,6 +114,16 @@ async function processCommand(command) {
             return;
         }
     }
+    if (cmd === 'view' || cmd === 'edit' || cmd === 'delete')
+    {
+        if (parts.length !== 2)
+        {
+            addLine(`Command ${cmd} expected exactly one parameter - task id.`);
+            return;
+        }
+        args = {"task_id": parts[1]};
+
+    }
     send_terminal_cmd(endpoint, args);
 }
 

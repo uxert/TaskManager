@@ -1,4 +1,4 @@
-from .db_operations import try_add_new_task, try_getting_user_tasks
+from .db_operations import try_add_new_task, try_getting_user_tasks, try_getting_specific_task
 from .models import AddTaskRequestModel, TargetSpecificTaskModel
 from .utils import DateTimeEncoder
 from pydantic import ValidationError
@@ -14,11 +14,17 @@ terminal = Blueprint('terminal', __name__)
 @login_required
 def view():
     """Allows to see all contents of one specific task based on its id"""
-    try:
-        task_data = TargetSpecificTaskModel.model_validate(request.json)
-    except ValidationError as e:
-        return jsonify({"status": "error", "message": str(e)}), 400
-    return jsonify({"status": "success", "result": "view command has been received"})
+    if not request.json["task_id"].isdigit():
+        return jsonify({"status": "error", "message": "Expected task_id to be integer!"}), 400
+    task_id = int(request.json["task_id"])
+    result = try_getting_specific_task(current_user.id, task_id)
+    if result.success is False:
+        return jsonify({"status": "error", "message": result.message}), 400
+
+    task_dict = result.task
+    task_dict.pop("parent_task_id")
+    task_dict.pop("user_id")
+    return jsonify({"status": "success", "result": json.dumps(task_dict, cls=DateTimeEncoder)}), 200
 
 @terminal.route('/add', methods=['POST'])
 @login_required
@@ -53,7 +59,7 @@ def show_list():
         task.pop("parent_task_id")
         task.pop("user_id")
     tasks_json = json.dumps(tasks, indent=4, cls=DateTimeEncoder)
-    return jsonify({"status": "success", "result": tasks_json})
+    return jsonify({"status": "success", "result": tasks_json}), 200
 
 @terminal.route('/delete', methods=['POST'])
 @login_required
