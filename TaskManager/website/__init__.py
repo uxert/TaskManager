@@ -13,15 +13,15 @@ DATABASE_PATH = path.join(BACKEND_DIR, DATABASE_NAME)
 TEST_DATABASE_PATH = path.join(BACKEND_DIR, "test.db")
 
 def create_app(test=False):
-    from .views import views
-    from .auth import auth
-    from .terminal import terminal
-
     database_path = TEST_DATABASE_PATH if test else DATABASE_PATH
     app = Flask(__name__)
     app.config["SECRET_KEY"] = "<KEY>"
     app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{database_path}"
     db.init_app(app)
+
+    from .views import views
+    from .auth import auth
+    from .terminal import terminal
 
     app.register_blueprint(views, url_prefix="/")
     app.register_blueprint(auth, url_prefix="/")
