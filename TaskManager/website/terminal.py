@@ -1,4 +1,5 @@
-from .db_operations import try_add_new_task, try_getting_user_tasks, try_getting_specific_task
+from .db_operations import try_add_new_task, try_getting_user_tasks, try_getting_specific_task, \
+    try_removing_specific_task
 from .models import AddTaskRequestModel, TargetSpecificTaskModel
 from .utils import DateTimeEncoder
 from pydantic import ValidationError
@@ -19,7 +20,9 @@ def view():
     task_id = int(request.json["task_id"])
     result = try_getting_specific_task(current_user.id, task_id)
     if result.success is False:
-        return jsonify({"status": "error", "message": result.message}), 400
+        if isinstance(result.exception, NoResultFound):
+            return jsonify({"status": "error", "message": result.message}), 404
+        return jsonify({"status": "error", "message": result.message}), 500
 
     task_dict = result.task
     task_dict.pop("parent_task_id")
@@ -38,7 +41,7 @@ def add():
     user_id = current_user.id
     result = try_add_new_task(task_data, user_id)
     if result.success is False:
-        return jsonify({"status": "error", "message": result.message}), 400
+        return jsonify({"status": "error", "message": result.message}), 500
     msg = (f"Your task '{task_data.title}', with importance {task_data.importance} and deadline {task_data.deadline} "
            f"has been succesfully added.'")
     return jsonify({"status": "success", "result": msg}), 200
@@ -52,7 +55,7 @@ def show_list():
     if result.success is False:
         if isinstance(result.exception, NoResultFound):
             return jsonify({"status": "error", "message": result.message}), 404
-        return jsonify({"status": "error", "message": result.message}), 400
+        return jsonify({"status": "error", "message": result.message}), 500
     tasks = result.tasks
     for task in tasks:
         # task.pop("task_id")
@@ -65,11 +68,18 @@ def show_list():
 @login_required
 def delete():
     """Deletes a task from the database, based on its id"""
-    try:
-        task_data = TargetSpecificTaskModel.model_validate(request.json)
-    except ValidationError as e:
-        return jsonify({"status": "error", "message": str(e)}), 400
-    return jsonify({"status": "success", "result": "del command has been received"})
+    print(request.json["task_id"])
+    if not request.json["task_id"].isdigit():
+        return jsonify({"status": "error", "message": "Expected task_id to be integer!"}), 400
+    task_id = int(request.json["task_id"])
+
+    result = try_removing_specific_task(current_user.id, task_id)
+    if result.success is False:
+        if isinstance(result.exception, NoResultFound):
+            return jsonify({"status": "error", "message": result.message}), 404
+        return jsonify({"status": "error", "message": result.message}), 500
+
+    return jsonify({"status": "success", "result": f"Succesfully deleted task '{result.message}'"})
 
 @terminal.route('/edit', methods=['POST'])
 @login_required
