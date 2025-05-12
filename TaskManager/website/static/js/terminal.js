@@ -38,29 +38,45 @@ function displayHelp() {
 /**
  * Sends `args` as a JSON to `endpoint` via a POST request.
  * Displays the result on the terminal
+ * when silent === true the function will NOT display result on the terminal
+ * when return_results === true the function will return result of fetch()
  */
-function send_terminal_cmd(endpoint, args) {
-    // Send a request to the appropriate endpoint
-    fetch(endpoint, {
-        method: 'POST',                                  // Using POST method
-        headers: {'Content-Type': 'application/json'},   // JSON content type
-        body: JSON.stringify(args)               // Send arguments as JSON
-    })
-        .then(response => response.json())  // Parse JSON response
-        .then(data => {
-            // Handle the response based on status
+async function send_terminal_cmd(endpoint, args, silent=false, return_results=false) {
+    try {
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(args)
+        });
+
+        const data = await response.json();
+
+        if (!silent) {
             if (data.status === 'success') {
-                // Display successful result with success styling
                 addLine(data.result, 'success');
             } else {
-                // Display error message with error styling
                 addLine(data.message, 'error');
             }
-        })
-        .catch(error => {
-            // Handle any network or other errors
+        }
+
+        if (return_results) {
+            return data;
+        }
+        return null;
+    } catch (error) {
+        if (!silent) {
             addLine(`Error: ${error}`, 'error');
-        });
+        }
+
+        if (return_results) {
+            return {
+                status: 'error',
+                message: error.toString(),
+                result: null
+            };
+        }
+        return null;
+    }
 }
 
 /**
