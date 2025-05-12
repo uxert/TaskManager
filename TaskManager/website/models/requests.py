@@ -25,3 +25,8 @@ class TargetSpecificTaskModel(BaseModel):
         return self
 
     model_config = {"validate_assignment": True}
+
+class EditTaskRequestModel(AddTaskRequestModel):
+    task_id: NonNegativeInt
+
+    model_config = {"validate_assignment": True}

@@ -7,8 +7,8 @@ from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import close_all_sessions
 from ..website import db, create_app, TEST_DATABASE_PATH
 from ..website.db_operations import try_getting_user_tasks, try_add_new_task, try_getting_specific_task, \
-    try_removing_specific_task
-from ..website.models.requests import AddTaskRequestModel
+    try_removing_specific_task, try_editing_specific_task
+from ..website.models.requests import AddTaskRequestModel, EditTaskRequestModel
 
 
 class TestDbOperations(TestCase):
@@ -217,3 +217,51 @@ class TestDbOperations(TestCase):
 
         res_del_4 = try_removing_specific_task(test_user_id, id_1)
         self.assertTrue(res_del_4.success)
+
+    def test_try_editing_specific_task(self):
+        task_data = AddTaskRequestModel(
+            title="Test task",
+            importance=10,
+            deadline=datetime.now(),
+            est_time_days=12,
+            description="Hello, it's a test. Also, hello world!"
+        )
+        test_user_id = 42
+        res1 = try_add_new_task(task_data, test_user_id)
+        self.assertTrue(res1.success)
+        id_1 = int(res1.message)
+
+        edit_request = EditTaskRequestModel(
+            task_id=id_1,
+            title="Edited",
+            importance=1,
+            deadline=task_data.deadline, # do not change the deadline and est_days
+            est_time_days=task_data.est_time_days,
+            description="This was edited"
+        )
+        res_edit = try_editing_specific_task(test_user_id, edit_request)
+        self.assertTrue(res_edit.success)
+
+        res_after_edit = try_getting_specific_task(test_user_id, id_1)
+        new_task = res_after_edit.task
+        self.assertTrue(res_after_edit.success)
+        self.assertTrue(new_task['title'] == "Edited")
+        self.assertTrue(new_task['importance'] == 1)
+        self.assertTrue(new_task['description'] == "This was edited")
+        self.assertTrue(new_task['deadline'] == task_data.deadline)
+        self.assertTrue(new_task['est_time_days'] == task_data.est_time_days)
+
+    def test_try_editing_nonexistent_task(self):
+        id_1 = 1
+        edit_request = EditTaskRequestModel(
+            task_id=id_1,
+            title="Edited",
+            importance=1,
+            deadline=datetime.now(), # do not change the deadline and est_days
+            est_time_days=15,
+            description="This was edited"
+        )
+        test_user_id = 42
+        res1 = try_editing_specific_task(test_user_id, edit_request)
+        self.assertFalse(res1.success)
+        self.assertIsInstance(res1.exception, NoResultFound)
