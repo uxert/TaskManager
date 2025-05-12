@@ -4,14 +4,14 @@ I want it to be self-hosted, without relying on external providers.
 # MOSCOW
 
 ## MUST
-- [ ] allow for creation of tasks
-- [ ] have some command-line editor that will allow user to perform basic CRUD on their tasks
-- [ ] of course persist the tasks in some database (probably just relational for the time being)
+- [x] allow for creation of tasks
+- [x] have some command-line editor that will allow user to perform basic CRUD on their tasks
+- [x] of course persist the tasks in some database (probably just relational for the time being)
 - [x] be able to register many users and login them, so that each user has his own tasks
 - [x] have a secure user authentication, so that you cannot see tasks on other accounts
-- [ ] tasks have to have assignable attributes, AT THE VERY LEAST name, importance, expected length and some custom comment
+- [x] tasks have to have assignable attributes, AT THE VERY LEAST name, importance, expected length and some custom comment
 - [ ] be fully self-hosted
-- [ ] have GUI at least for login and the most basic task CRUD
+- [x] have GUI at least for login and the most basic task CRUD 
 
 
 ## SHOULD
