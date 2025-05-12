@@ -24,14 +24,14 @@ function addLine(text, className = '') {
  */
 function displayHelp() {
     // Add header
-    addLine('<strong>Available commands:</strong>', 'info');
-    addLine('<span class="help-command">help</span>: Show this help message', 'info');
-    addLine('<span class="help-command">list</span>: List all tasks', 'info');
-    addLine('<span class="help-command">view &lt;id&gt;</span>: View a task by ID', 'info');
-    addLine('<span class="help-command">add &lt;title&gt; &lt;content&gt;</span>: Add a new task', 'info');
-    addLine('<span class="help-command">edit &lt;id&gt; title=&lt;new_title&gt; content=&lt;new_content&gt;</span>: Edit a note', 'info');
-    addLine('<span class="help-command">delete &lt;id&gt;</span>: Delete a task by ID', 'info');
-    addLine('<span class="help-command">clear</span>: Clear the terminal', 'info');
+    addLine('<span class="help-header">Available commands:</span>', 'info');
+    addLine('<span class="help-command">help</span><span class="help-description">Show this help message</span>', 'info');
+    addLine('<span class="help-command">list</span><span class="help-description">List all tasks</span>', 'info');
+    addLine('<span class="help-command">view &lt;id&gt;</span><span class="help-description">View a task by ID</span>', 'info');
+    addLine('<span class="help-command">add</span><span class="help-description">Add a new task. This will open a form to fill data of the new task</span>', 'info');
+    addLine('<span class="help-command">edit &lt;id&gt;</span><span class="help-description">Edit a task with given ID. This will open a form</span>', 'info');
+    addLine('<span class="help-command">delete &lt;id&gt;</span><span class="help-description">Delete a task by ID</span>', 'info');
+    addLine('<span class="help-command">clear</span><span class="help-description">Clear the terminal</span>', 'info');
     addLine('<span class="help-command">')
 }
 

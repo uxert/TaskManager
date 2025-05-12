@@ -41,3 +41,34 @@
   margin-bottom: 10px;
   white-space: pre-wrap;
 }
+
+.info {
+    margin: 4px 0;
+    line-height: 1.5;
+    font-family: 'Courier New', monospace;
+}
+
+.help-command {
+    color: #4CAF50;
+    font-weight: bold;
+    padding: 2px 4px;
+    background-color: rgba(76, 175, 80, 0.1);
+    border-radius: 3px;
+    display: inline-block;
+}
+
+.help-header {
+    color: #2196F3;
+    font-size: 1.1em;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 4px;
+}
+
+.help-description {
+    color: #b3b3b3;
+    padding-left: 8px;
+    border-left: 3px solid #555;
+    margin-left: 4px;
+    font-size: 0.9em;
+}
