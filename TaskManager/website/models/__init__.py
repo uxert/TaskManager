@@ -1,3 +1,3 @@
 from . import responses
-from .requests import AddTaskRequestModel, TargetSpecificTaskModel
+from .requests import AddTaskRequestModel, TargetSpecificTaskModel, EditTaskRequestModel
 

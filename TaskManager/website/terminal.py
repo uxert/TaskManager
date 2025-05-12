@@ -1,6 +1,6 @@
 from .db_operations import try_add_new_task, try_getting_user_tasks, try_getting_specific_task, \
-    try_removing_specific_task
-from .models import AddTaskRequestModel, TargetSpecificTaskModel
+    try_removing_specific_task, try_editing_specific_task
+from .models import AddTaskRequestModel, EditTaskRequestModel
 from .utils import DateTimeEncoder
 from pydantic import ValidationError
 from flask import Blueprint, jsonify, request
@@ -27,7 +27,7 @@ def view():
     task_dict = result.task
     task_dict.pop("parent_task_id")
     task_dict.pop("user_id")
-    return jsonify({"status": "success", "result": json.dumps(task_dict, cls=DateTimeEncoder)}), 200
+    return jsonify({"status": "success", "result": json.dumps(task_dict, cls=DateTimeEncoder, indent=4)}), 200
 
 @terminal.route('/add', methods=['POST'])
 @login_required
@@ -79,7 +79,7 @@ def delete():
             return jsonify({"status": "error", "message": result.message}), 404
         return jsonify({"status": "error", "message": result.message}), 500
 
-    return jsonify({"status": "success", "result": f"Succesfully deleted task '{result.message}'"})
+    return jsonify({"status": "success", "result": f"Succesfully deleted task '{result.message}'"}), 200
 
 @terminal.route('/edit', methods=['POST'])
 @login_required
@@ -88,9 +88,17 @@ def edit():
     Allows user to edit everything in the task (except id). Task to edit can be chosen by its id.
     """
     try:
-        task_data = TargetSpecificTaskModel.model_validate(request.json)
+        edit_request = EditTaskRequestModel.model_validate(request.json)
     except ValidationError as e:
         return jsonify({"status": "error", "message": str(e)}), 400
-    return jsonify({"status": "success", "result": "edit command has been received"})
+
+    user_id = current_user.id
+    result = try_editing_specific_task(user_id, edit_request)
+    if result.success is False:
+        if isinstance(result.exception, NoResultFound):
+            return jsonify({"status": "error", "message": result.message}), 404
+        return jsonify({"status": "error", "message": result.message}), 500
+
+    return jsonify({"status": "success", "result": result.message}), 200
 
 
