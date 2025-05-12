@@ -140,7 +140,39 @@ async function processCommand(command) {
         args = {"task_id": parts[1]};
 
     }
-    send_terminal_cmd(endpoint, args);
+
+    // edit has special treatment, as it sends multiple requests
+    if (cmd !== 'edit') {
+        send_terminal_cmd(endpoint, args);
+        return;
+    }
+    const task_response = await send_terminal_cmd(endpoints['view'], args, true, true);
+    if (task_response.status !== 'success')
+    {
+        addLine(`Couldn't edit: ${task_response.message}`);
+        return;
+    }
+    const task_data = JSON.parse(task_response.result);
+    args = await showTaskForm(task_data);
+    console.log("args from showTaskForm()", args);
+    if (args === null)
+    {
+        addLine("Edit command cancelled. No changes made");
+        return;
+    }
+    args.task_id = parts[1];
+    const edit_response = await send_terminal_cmd(endpoint, args, true, true);
+    if (edit_response.status !== 'success')
+    {
+        addLine(edit_response.message);
+        return;
+    }
+    addLine(edit_response.result);
+
+    send_terminal_cmd(endpoints['view'], {"task_id": parts[1]}, false, false);
+
+
+
 }
 
 // Set up event listener for keyboard input
