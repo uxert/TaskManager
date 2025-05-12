@@ -1,7 +1,7 @@
 // modal.js - Modal form module
 
 // Function to show modal form and return a promise with the form values
-function showTaskForm() {
+function showTaskForm(defaults = null) {
     return new Promise((resolve, reject) => {
         try {
             // Create a link element for the CSS
@@ -31,6 +31,11 @@ function showTaskForm() {
                     const formModal = document.getElementById('formModal');
                     formModal.showModal();
 
+                    // Populate form with default values if provided
+                    if (defaults) {
+                        populateFormWithDefaults(defaults);
+                    }
+
                     // Set up event listeners
                     setupModalEventListeners(resolve, reject);
                 })
@@ -43,6 +48,30 @@ function showTaskForm() {
         }
     });
 }
+
+/**
+ * Populates form fields with default values
+ * @param {Object} defaultValues - Object containing default values for form fields
+ */
+function populateFormWithDefaults(defaultValues) {
+    // For each possible form field, check if a default value exists and set it
+    if (defaultValues.title !== undefined) {
+        document.getElementById('title').value = defaultValues.title;
+    }
+    if (defaultValues.importance !== undefined) {
+        document.getElementById('importance').value = defaultValues.importance;
+    }
+    if (defaultValues.deadline !== undefined) {
+        document.getElementById('deadline').value = defaultValues.deadline;
+    }
+    if (defaultValues.est_time_days !== undefined) {
+        document.getElementById('est_time_days').value = defaultValues.est_time_days;
+    }
+    if (defaultValues.description !== undefined) {
+        document.getElementById('description').value = defaultValues.description;
+    }
+}
+
 
 // Function to set up event listeners for the modal
 function setupModalEventListeners(resolve, reject) {
